@@ -28,6 +28,7 @@ const LibraryPage: FC = () => {
               </span>
             </div>
           </ListSubheader>
+          <Divider />
         </List>
       </Box>
     </div>
