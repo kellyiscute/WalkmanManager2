@@ -1,5 +1,5 @@
 import { configContext } from "@/contexts/ConfigContextProvider";
-import { Tab, Tabs } from "@mui/material";
+import { Box, Tab, Tabs } from "@mui/material";
 import { FC, useContext, useMemo } from "react";
 import { Navigate, Outlet, useLocation, useNavigate } from "react-router-dom";
 
@@ -26,12 +26,16 @@ const HomePage: FC = () => {
   }
 
   return (
-    <div className="h-screen">
-      <Tabs value={currentPath === "library" ? 0 : 1}>
-        <Tab label="Library" onClick={gotoLibrary} />
-        <Tab label="Device" onClick={gotoDevice} />
-      </Tabs>
-      <Outlet />
+    <div className="h-screen flex flex-col">
+      <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+        <Tabs className="flex-none" value={currentPath === "library" ? 0 : 1}>
+          <Tab label="Library" onClick={gotoLibrary} />
+          <Tab label="Device" onClick={gotoDevice} />
+        </Tabs>
+      </Box>
+      <div className="flex-auto">
+        <Outlet />
+      </div>
     </div>
   );
 };

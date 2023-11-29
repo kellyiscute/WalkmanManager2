@@ -55,7 +55,7 @@ async function createWindow() {
     },
   });
 
-  win.removeMenu();
+  // win.removeMenu();
 
   if (url) { // electron-vite-vue#298
     win.loadURL(url);
