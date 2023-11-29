@@ -6,5 +6,10 @@
   "lib-path": "Library Path",
   "browse": "Browse",
   "finish": "Finish",
-  "next": "Next"
+  "next": "Next",
+  "search": "Search",
+  "storage-id": "Local Storage ID",
+  "name": "Name",
+  "artist": "Artist",
+  "path": "Local Path"
 }
