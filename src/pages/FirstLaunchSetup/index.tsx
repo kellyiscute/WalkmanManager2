@@ -1,6 +1,6 @@
 import { configContext } from "@/contexts/ConfigContextProvider";
 import { NavigateNext } from "@mui/icons-material";
-import { Button, Fab, TextField } from "@mui/material";
+import { Button, Fab, TextField, Typography } from "@mui/material";
 import { FC, useContext } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -24,9 +24,9 @@ const FirstLaunchSetupPage: FC = () => {
 
   return (
     <div className="flex-center w-full h-full">
-      <h2>{t("setup-lib-path")}</h2>
-      <div className="flex" style={{ gap: "1rem" }}>
-        <TextField variant="outlined" size="small" label={t("lib-path")} value={libraryPath} inputProps={{ readOnly: true }} />
+      <Typography variant="h3">{t("setup-lib-path")}</Typography>
+      <div className="flex mt-6" style={{ gap: "1rem" }}>
+        <TextField variant="outlined" size="small" label={t("lib-path") ?? ""} value={libraryPath ?? ""} inputProps={{ readOnly: true }} />
         <Button variant="contained" onClick={browseLibraryPath}>{t("browse")}</Button>
       </div>
       <div className="absolute" style={{ bottom: "2rem", right: "3rem" }}>
