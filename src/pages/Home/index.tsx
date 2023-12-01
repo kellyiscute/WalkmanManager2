@@ -1,6 +1,6 @@
 import { configContext } from "@/contexts/ConfigContextProvider";
 import { Settings } from "@mui/icons-material";
-import { Box, Button, Divider, IconButton, Tab, Tabs } from "@mui/material";
+import { Box, IconButton, Tab, Tabs } from "@mui/material";
 import { FC, useContext, useMemo } from "react";
 import { Navigate, Outlet, useLocation, useNavigate } from "react-router-dom";
 
