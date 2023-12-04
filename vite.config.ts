@@ -18,7 +18,8 @@ export default defineConfig(({ command }) => {
     esbuild: false,
     resolve: {
       alias: {
-        "@": path.join(__dirname, "src")
+        "@": path.join(__dirname, "src"),
+        "@utils": path.join(__dirname, "src/utils"),
       },
     },
     plugins: [

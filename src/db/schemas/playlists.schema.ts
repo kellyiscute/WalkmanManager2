@@ -1,4 +1,4 @@
 export interface PlaylistsSchema {
-  id: number;
+  id?: number;
   name: string;
 }

@@ -6,6 +6,7 @@ import FirstLaunchPage from "./pages/FirstLaunch";
 import FirstLaunchSetupPage from "./pages/FirstLaunchSetup";
 import LibraryPage from "./pages/Library";
 import DevicePage from "./pages/Device";
+import LibraryContextProvider from "./contexts/LibraryContextProvider";
 
 const router = createMemoryRouter([
   {
@@ -35,7 +36,9 @@ const router = createMemoryRouter([
 function App() {
   return (
     <ConfigContextProvider>
-      <RouterProvider router={router}/>
+      <LibraryContextProvider>
+        <RouterProvider router={router}/>
+      </LibraryContextProvider>
     </ConfigContextProvider>
   );
 }

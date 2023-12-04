@@ -3,3 +3,10 @@ declare interface Window {
     selectDirectory: () => Promise<string>
   }
 }
+
+declare interface MusicMetadata {
+  title?: string;
+  artist?: string;
+  album?: string;
+  duration?: number;
+}
