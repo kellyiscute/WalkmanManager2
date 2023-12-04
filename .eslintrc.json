@@ -32,6 +32,7 @@
     "quotes": ["error", "double"],
     "semi": ["error", "always"],
     "react/react-in-jsx-scope": "off",
-    "max-len": ["warn", 100]
+    "max-len": ["warn", 100],
+    "object-curly-spacing": ["error", "always"]
   }
 }
