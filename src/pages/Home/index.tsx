@@ -1,11 +1,13 @@
 import { configContext } from "@/contexts/ConfigContextProvider";
+import { libraryContext } from "@/contexts/LibraryContextProvider";
 import { Settings } from "@mui/icons-material";
-import { Box, IconButton, Tab, Tabs } from "@mui/material";
+import { Box, IconButton, LinearProgress, Tab, Tabs, Typography } from "@mui/material";
 import { FC, useContext, useMemo } from "react";
 import { Navigate, Outlet, useLocation, useNavigate } from "react-router-dom";
 
 const HomePage: FC = () => {
   const { config } = useContext(configContext);
+  const { ready } = useContext(libraryContext);
   const location = useLocation();
   const currentPath = useMemo(() => location.pathname.split("/")[1], [location]);
   const navigate = useNavigate();
@@ -24,6 +26,15 @@ const HomePage: FC = () => {
 
   function gotoDevice() {
     navigate("/device", { replace: true });
+  }
+
+  if (!ready) {
+    return (
+      <div className="h-screen flex flex-col justify-center items-center flex-col">
+        <Typography variant="h4">Updating Library...</Typography>
+        <LinearProgress className="w-1/2 mt-6" />
+      </div>
+    );
   }
 
   return (
