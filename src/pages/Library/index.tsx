@@ -14,12 +14,12 @@ const LibraryPage: FC = () => {
   }
   
   const rows = [
-    {id: 1, name: "Kelly is cute", artist: "Emily", path: "/home/kelly/music/1"},
-    {id: 2, name: "Kelly is not cute", artist: "Cat", path: "/home/kelly/music/1"},
-    {id: 3, name: "Is Kelly cute", artist: "Someone", path: "/home/kelly/music/1"},
-    {id: 4, name: "Kelly is cute", artist: "Someone", path: "/home/kelly/music/1"},
-    {id: 5, name: "Kelly is cute", artist: "", path: "/home/kelly/music/1"},
-    {id: 6, name: "Kelly is cute", artist: "null", path: "/home/kelly/music/1"},
+    { id: 1, name: "Kelly is cute", artist: "Emily", path: "/home/kelly/music/1" },
+    { id: 2, name: "Kelly is not cute", artist: "Cat", path: "/home/kelly/music/1" },
+    { id: 3, name: "Is Kelly cute", artist: "Someone", path: "/home/kelly/music/1" },
+    { id: 4, name: "Kelly is cute", artist: "Someone", path: "/home/kelly/music/1" },
+    { id: 5, name: "Kelly is cute", artist: "", path: "/home/kelly/music/1" } ,
+    { id: 6, name: "Kelly is cute", artist: "null", path: "/home/kelly/music/1" },
   ];
 
   return (
