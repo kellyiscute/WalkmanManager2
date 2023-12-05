@@ -46,7 +46,7 @@ const LibraryPage: FC = () => {
       </Box>
 
       <Box className="flex-auto">
-        <Box sx={{ display: "flex", alignItems: "flex-end", marginLeft: "15px"}}>
+        <Box sx={{ display: "flex", alignItems: "flex-end", marginLeft: "15px" }}>
           <SearchIcon sx={{ color: "action.active", mr: 1, my: 0.5 }} />
           <TextField id="input-with-sx" label={t("search")} variant="standard" />
         </Box>

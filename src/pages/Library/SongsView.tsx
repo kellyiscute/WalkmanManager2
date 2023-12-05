@@ -1,12 +1,21 @@
-import { Menu, MenuItem, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
+import {
+  Menu,
+  MenuItem,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+} from "@mui/material";
 import React, { FC, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 export interface SongsInfo {
-  id: number,
-  name: string,
-  artist: string,
-  path: string,
+  id: number;
+  name: string;
+  artist: string;
+  path: string;
 }
 
 export interface SongsViewArgs {
@@ -20,19 +29,22 @@ const SongsView: FC<SongsViewArgs> = ({ SongsInfos, onDeleteSong, onRemoveFromPl
   const contextMenuContext = useRef<number | null>(null);
 
   const [contextMenu, setContextMenu] = useState<{
-      mouseX: number;
-      mouseY: number;
-    } | null
-  >(null);
+    mouseX: number;
+    mouseY: number;
+  } | null>(null);
 
-  const handleContextMenu = (event: React.MouseEvent<HTMLTableRowElement, MouseEvent>, songId: number) => {
+  const handleContextMenu = (
+    event: React.MouseEvent<HTMLTableRowElement, MouseEvent>,
+    songId: number,
+  ) => {
     event.preventDefault();
     setContextMenu(
       contextMenu === null
         ? {
           mouseX: event.clientX + 2,
           mouseY: event.clientY - 6,
-        } : null,
+        }
+        : null,
     );
     contextMenuContext.current = songId;
   };
@@ -68,8 +80,9 @@ const SongsView: FC<SongsViewArgs> = ({ SongsInfos, onDeleteSong, onRemoveFromPl
             </TableRow>
           </TableHead>
           <TableBody>
-            {SongsInfos.map((row) => ( 
+            {SongsInfos.map((row) => (
               <TableRow
+                hover
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                 key={row.name}
                 onContextMenu={(e) => handleContextMenu(e, row.id)}
@@ -84,18 +97,15 @@ const SongsView: FC<SongsViewArgs> = ({ SongsInfos, onDeleteSong, onRemoveFromPl
         </Table>
       </TableContainer>
 
-      <Menu 
-        open={contextMenu !== null} 
+      <Menu
+        open={contextMenu !== null}
         anchorReference="anchorPosition"
         anchorPosition={
-          contextMenu !== null
-            ? { top: contextMenu.mouseY, left: contextMenu.mouseX }
-            : undefined
+          contextMenu !== null ? { top: contextMenu.mouseY, left: contextMenu.mouseX } : undefined
         }
       >
         <MenuItem onClick={handleDelete}>Delete</MenuItem>
         <MenuItem onClick={handleRemoveFromPlaylist}>Remove from Playlist</MenuItem>
-
       </Menu>
     </div>
   );

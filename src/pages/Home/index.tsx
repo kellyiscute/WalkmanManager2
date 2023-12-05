@@ -1,3 +1,4 @@
+import BackgroundTaskIndicator from "@/components/BackgroundTaskIndicator";
 import { configContext } from "@/contexts/ConfigContextProvider";
 import { libraryContext } from "@/contexts/LibraryContextProvider";
 import { Settings } from "@mui/icons-material";
@@ -39,6 +40,9 @@ const HomePage: FC = () => {
 
   return (
     <div className="h-screen flex flex-col">
+      <div className="absolute bottom-8 right-8">
+        <BackgroundTaskIndicator />
+      </div>
       <Box className="flex justify-between" sx={{ borderBottom: 1, borderColor: "divider" }}>
         <Tabs className="flex-none" value={currentPath === "library" ? 0 : 1}>
           <Tab label="Library" onClick={gotoLibrary} />
