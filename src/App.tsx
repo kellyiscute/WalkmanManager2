@@ -22,7 +22,7 @@ const router = createMemoryRouter([
         path: "/device",
         element: <DevicePage />,
       },
-    ]
+    ],
   },
   {
     path: "/first-launch",
@@ -31,7 +31,7 @@ const router = createMemoryRouter([
   {
     path: "/first-launch/setup",
     element: <FirstLaunchSetupPage />,
-  }
+  },
 ]);
 
 function App() {
@@ -39,7 +39,7 @@ function App() {
     <ConfigContextProvider>
       <LibraryContextProvider>
         <BackgroundTaskContextProvider>
-          <RouterProvider router={router}/>
+          <RouterProvider router={router} />
         </BackgroundTaskContextProvider>
       </LibraryContextProvider>
     </ConfigContextProvider>

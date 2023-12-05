@@ -36,5 +36,10 @@
     "react/react-in-jsx-scope": "off",
     "max-len": ["warn", 100],
     "object-curly-spacing": ["error", "always"]
+  },
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
   }
 }

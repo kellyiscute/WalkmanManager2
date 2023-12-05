@@ -9,10 +9,16 @@ const FirstLaunchPage: FC = () => {
 
   return (
     <div className="flex-center w-full h-full">
-      <Typography variant="h3" className="text-center">{t("welcome")}</Typography>
-      <Typography variant="subtitle1" className="text-center">{t("welcome-guide")}</Typography>
+      <Typography variant="h3" className="text-center">
+        {t("welcome")}
+      </Typography>
+      <Typography variant="subtitle1" className="text-center">
+        {t("welcome-guide")}
+      </Typography>
       <Link replace to="/first-launch/setup" className="mt-4">
-        <Button variant="contained" endIcon={<ArrowForwardIcon />}>{t("get-started")}</Button>
+        <Button variant="contained" endIcon={<ArrowForwardIcon />}>
+          {t("get-started")}
+        </Button>
       </Link>
     </div>
   );

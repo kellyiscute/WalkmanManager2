@@ -49,7 +49,9 @@ const HomePage: FC = () => {
           <Tab label="Device" onClick={gotoDevice} />
         </Tabs>
         <Box className="h-full aspect-square flex flex-none">
-          <IconButton className="h-full aspect-square"><Settings /></IconButton>
+          <IconButton className="h-full aspect-square">
+            <Settings />
+          </IconButton>
         </Box>
       </Box>
       <div className="flex-auto">

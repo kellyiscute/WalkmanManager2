@@ -12,14 +12,18 @@ import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
 
-i18n.use(Backend).use(LanguageDetector).use(initReactI18next).init({
-  backend: {
-    loadPath: "locales/{{lng}}/{{ns}}.json",
-    contextBridgeApiKey: "electronApi",
-  },
-  debug: true,
-  fallbackLng: "en",
-});
+i18n
+  .use(Backend)
+  .use(LanguageDetector)
+  .use(initReactI18next)
+  .init({
+    backend: {
+      loadPath: "locales/{{lng}}/{{ns}}.json",
+      contextBridgeApiKey: "electronApi",
+    },
+    debug: true,
+    fallbackLng: "en",
+  });
 
 const theme = createTheme({
   palette: {

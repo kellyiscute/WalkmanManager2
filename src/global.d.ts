@@ -1,7 +1,7 @@
 declare interface Window {
   api: {
-    selectDirectory: () => Promise<string>
-  }
+    selectDirectory: () => Promise<string>;
+  };
 }
 
 declare interface MusicMetadata {

@@ -38,14 +38,10 @@ const SongsView: FC<SongsViewArgs> = ({ SongsInfos, onDeleteSong, onRemoveFromPl
     songId: number,
   ) => {
     event.preventDefault();
-    setContextMenu(
-      contextMenu === null
-        ? {
-          mouseX: event.clientX + 2,
-          mouseY: event.clientY - 6,
-        }
-        : null,
-    );
+    setContextMenu({
+      mouseX: event.clientX + 2,
+      mouseY: event.clientY - 6,
+    });
     contextMenuContext.current = songId;
   };
 

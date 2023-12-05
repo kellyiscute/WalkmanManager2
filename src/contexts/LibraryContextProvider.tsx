@@ -25,7 +25,7 @@ export interface LibraryContextValue {
   deleteSong: (id: number) => void;
 
   getPlaylists: () => string[];
-  createPlaylist: typeof Database["instance"]["createPlaylist"];
+  createPlaylist: (typeof Database)["instance"]["createPlaylist"];
   deletePlaylist: (idOrName: string | number) => Promise<void>;
 }
 
@@ -85,7 +85,7 @@ const LibraryContextProvider: FC<PropsWithChildren> = ({ children }) => {
     const diff = await diffSongs(libPath);
     const deletedSongRows = Database.instance.songs.filter((song) => diff.deleted.has(song.path));
     // update
-    await Database.instance.playlistsSongs.bulkDelete(await deletedSongRows.keys() as number[]);
+    await Database.instance.playlistsSongs.bulkDelete((await deletedSongRows.keys()) as number[]);
     await deletedSongRows.delete();
     const newSongs = await Promise.allSettled(
       Array.from(diff.new).map(async (path) => {

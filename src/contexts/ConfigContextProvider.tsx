@@ -10,7 +10,10 @@ export interface ConfigContextValue {
   setLibraryPath: (path: string) => void;
 }
 
-export const configContext = createContext<ConfigContextValue>({ config: {}, setLibraryPath: _.noop });
+export const configContext = createContext<ConfigContextValue>({
+  config: {},
+  setLibraryPath: _.noop,
+});
 
 function loadConfig(): ConfigData {
   const libraryPath = localStorage.getItem("libraryPath");
@@ -26,9 +29,7 @@ const ConfigContextProvider: FC<PropsWithChildren> = ({ children }) => {
   };
 
   return (
-    <configContext.Provider value={{ config, setLibraryPath }}>
-      {children}
-    </configContext.Provider>
+    <configContext.Provider value={{ config, setLibraryPath }}>{children}</configContext.Provider>
   );
 };
 

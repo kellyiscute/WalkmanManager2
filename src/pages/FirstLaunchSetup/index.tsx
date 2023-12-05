@@ -26,11 +26,21 @@ const FirstLaunchSetupPage: FC = () => {
     <div className="flex-center w-full h-full">
       <Typography variant="h3">{t("setup-lib-path")}</Typography>
       <div className="flex mt-6" style={{ gap: "1rem" }}>
-        <TextField variant="outlined" size="small" label={t("lib-path") ?? ""} value={libraryPath ?? ""} inputProps={{ readOnly: true }} />
-        <Button variant="contained" onClick={browseLibraryPath}>{t("browse")}</Button>
+        <TextField
+          variant="outlined"
+          size="small"
+          label={t("lib-path") ?? ""}
+          value={libraryPath ?? ""}
+          inputProps={{ readOnly: true }}
+        />
+        <Button variant="contained" onClick={browseLibraryPath}>
+          {t("browse")}
+        </Button>
       </div>
       <div className="absolute" style={{ bottom: "2rem", right: "3rem" }}>
-        <Fab color="primary" variant="extended" disabled={!libraryPath} onClick={handleNext}>{t("finish")} <NavigateNext /></Fab>
+        <Fab color="primary" variant="extended" disabled={!libraryPath} onClick={handleNext}>
+          {t("finish")} <NavigateNext />
+        </Fab>
       </div>
     </div>
   );
