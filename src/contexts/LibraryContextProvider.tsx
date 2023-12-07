@@ -38,16 +38,20 @@ export const libraryContext = createContext<LibraryContextValue>(null!);
 
 async function diffSongs(libPath: string) {
   const allSongs = await Database.instance.songs.toArray();
-  const songPaths = new Set(allSongs.map((song) => path.join(libPath, song.path)));
+  const songPaths = new Set(allSongs.map((song) => song.path));
   const deleted = new Set<string>();
   const newSongs = new Set<string>();
 
-  const files = await fs.readdir(libPath);
+  const files = new Set(await fs.readdir(libPath));
   for (const file of files) {
-    if (songPaths.has(file)) {
-      deleted.add(file);
-    } else {
+    if (!songPaths.has(file)) {
       newSongs.add(file);
+    }
+  }
+
+  for (const song of allSongs) {
+    if (!files.has(song.path)) {
+      deleted.add(song.path);
     }
   }
 
