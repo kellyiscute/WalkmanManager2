@@ -27,6 +27,7 @@
     "@mui/material": "^5.14.18",
     "dexie": "^3.2.4",
     "electron-updater": "^6.1.1",
+    "fuse.js": "^7.0.0",
     "i18next": "^23.7.6",
     "i18next-browser-languagedetector": "^7.2.0",
     "i18next-fs-backend": "^2.3.0",
