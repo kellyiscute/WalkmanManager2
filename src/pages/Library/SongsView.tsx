@@ -95,7 +95,7 @@ const SongsView: FC<SongsViewArgs> = ({ songs, onDeleteSong, onRemoveFromPlaylis
         anchorPosition={
           contextMenu !== null ? { top: contextMenu.mouseY, left: contextMenu.mouseX } : undefined
         }
-        onBlur={closeContextMenu}
+        onClose={closeContextMenu}
       >
         <MenuItem onClick={handleDelete}>Delete</MenuItem>
         <MenuItem onClick={handleRemoveFromPlaylist}>Remove from Playlist</MenuItem>
