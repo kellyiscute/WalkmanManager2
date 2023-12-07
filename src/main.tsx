@@ -5,7 +5,7 @@ import "./index.css";
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
-import { CssBaseline, ThemeProvider, createTheme } from "@mui/material";
+import { CssBaseline, StyledEngineProvider, ThemeProvider, createTheme } from "@mui/material";
 import Backend from "i18next-fs-backend";
 import "@fontsource/roboto/300.css";
 import "@fontsource/roboto/400.css";
@@ -33,10 +33,12 @@ const theme = createTheme({
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <App />
-    </ThemeProvider>
+    <StyledEngineProvider injectFirst>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <App />
+      </ThemeProvider>
+    </StyledEngineProvider>
   </React.StrictMode>,
 );
 

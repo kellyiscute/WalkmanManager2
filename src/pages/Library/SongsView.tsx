@@ -1,3 +1,4 @@
+import { SongsSchema } from "@/db/schemas/songs.schema";
 import {
   Menu,
   MenuItem,
@@ -10,21 +11,15 @@ import {
 } from "@mui/material";
 import React, { FC, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-
-export interface SongsInfo {
-  id: number;
-  name: string;
-  artist: string;
-  path: string;
-}
+import { TableVirtuoso } from "react-virtuoso";
 
 export interface SongsViewArgs {
-  SongsInfos: SongsInfo[];
+  songs: SongsSchema[];
   onDeleteSong?: (songId: number) => void;
   onRemoveFromPlaylist?: (songId: number) => void;
 }
 
-const SongsView: FC<SongsViewArgs> = ({ SongsInfos, onDeleteSong, onRemoveFromPlaylist }) => {
+const SongsView: FC<SongsViewArgs> = ({ songs, onDeleteSong, onRemoveFromPlaylist }) => {
   const { t } = useTranslation("common");
   const contextMenuContext = useRef<number | null>(null);
 
@@ -64,34 +59,35 @@ const SongsView: FC<SongsViewArgs> = ({ SongsInfos, onDeleteSong, onRemoveFromPl
   };
 
   return (
-    <div onClick={closeContextMenu}>
-      <TableContainer>
-        <Table aria-label="simple table">
-          <TableHead>
-            <TableRow>
-              <TableCell align="left">{t("storage-id")}</TableCell>
-              <TableCell align="left">{t("name")}</TableCell>
-              <TableCell align="left">{t("artist")}</TableCell>
-              <TableCell align="left">{t("path")}</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {SongsInfos.map((row) => (
-              <TableRow
-                hover
-                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                key={row.name}
-                onContextMenu={(e) => handleContextMenu(e, row.id)}
-              >
-                <TableCell align="left">{row.id}</TableCell>
-                <TableCell align="left">{row.name}</TableCell>
-                <TableCell align="left">{row.artist}</TableCell>
-                <TableCell align="left">{row.path}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+    <>
+      <TableVirtuoso
+        data={songs}
+        components={{
+          Scroller: TableContainer,
+          Table: (props) => (
+            <Table {...props} sx={{ tableLayout: "fixed", borderCollapse: "separate" }} />
+          ),
+          TableHead,
+          TableRow: (data) => (
+            <TableRow hover {...data} onContextMenu={(e) => handleContextMenu(e, data.item.id!)} />
+          ),
+          TableBody,
+        }}
+        fixedHeaderContent={() => (
+          <TableRow sx={{ backgroundColor: "background.paper" }}>
+            <TableCell align="left">{t("name")}</TableCell>
+            <TableCell align="left">{t("artist")}</TableCell>
+            <TableCell align="left">{t("path")}</TableCell>
+          </TableRow>
+        )}
+        itemContent={(_, data) => (
+          <>
+            <TableCell align="left">{data.title}</TableCell>
+            <TableCell align="left">{data.artist}</TableCell>
+            <TableCell align="left">{data.album}</TableCell>
+          </>
+        )}
+      />
 
       <Menu
         open={contextMenu !== null}
@@ -99,11 +95,12 @@ const SongsView: FC<SongsViewArgs> = ({ SongsInfos, onDeleteSong, onRemoveFromPl
         anchorPosition={
           contextMenu !== null ? { top: contextMenu.mouseY, left: contextMenu.mouseX } : undefined
         }
+        onBlur={closeContextMenu}
       >
         <MenuItem onClick={handleDelete}>Delete</MenuItem>
         <MenuItem onClick={handleRemoveFromPlaylist}>Remove from Playlist</MenuItem>
       </Menu>
-    </div>
+    </>
   );
 };
 

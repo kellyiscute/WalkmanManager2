@@ -35,7 +35,8 @@
     "semi": ["error", "always"],
     "react/react-in-jsx-scope": "off",
     "max-len": ["warn", 100],
-    "object-curly-spacing": ["error", "always"]
+    "object-curly-spacing": ["error", "always"],
+    "react/display-name": "off"
   },
   "settings": {
     "react": {

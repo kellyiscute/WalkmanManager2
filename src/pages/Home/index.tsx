@@ -54,7 +54,7 @@ const HomePage: FC = () => {
           </IconButton>
         </Box>
       </Box>
-      <div className="flex-auto">
+      <div className="flex-auto relative">
         <Outlet />
       </div>
     </div>

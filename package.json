@@ -37,6 +37,7 @@
     "music-metadata": "^7.14.0",
     "react-i18next": "^13.5.0",
     "react-router-dom": "^6.20.0",
+    "react-virtuoso": "^4.6.2",
     "sort-by": "^1.2.0"
   },
   "devDependencies": {

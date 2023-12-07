@@ -5,6 +5,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useState,
 } from "react";
 import { Map, List } from "immutable";
@@ -14,6 +15,7 @@ import { configContext } from "./ConfigContextProvider";
 import musicMetadata from "music-metadata";
 import { SongsSchema } from "@/db/schemas/songs.schema";
 import { isFullfilledPromise } from "@utils";
+import path from "node:path";
 
 type SongDetail = Omit<SongsSchema, "id"> & { id: number };
 
@@ -27,13 +29,16 @@ export interface LibraryContextValue {
   getPlaylists: () => string[];
   createPlaylist: (typeof Database)["instance"]["createPlaylist"];
   deletePlaylist: (idOrName: string | number) => Promise<void>;
+
+  playlists: string[];
+  songs: SongDetail[];
 }
 
 export const libraryContext = createContext<LibraryContextValue>(null!);
 
 async function diffSongs(libPath: string) {
   const allSongs = await Database.instance.songs.toArray();
-  const songPaths = new Set(allSongs.map((song) => song.path));
+  const songPaths = new Set(allSongs.map((song) => path.join(libPath, song.path)));
   const deleted = new Set<string>();
   const newSongs = new Set<string>();
 
@@ -52,8 +57,8 @@ async function diffSongs(libPath: string) {
   };
 }
 
-async function loadSongMeta(path: string): Promise<MusicMetadata> {
-  const meta = await musicMetadata.parseFile(path);
+async function loadSongMeta(libPath: string, filename: string): Promise<MusicMetadata> {
+  const meta = await musicMetadata.parseFile(path.join(libPath, filename));
   return {
     title: meta.common.title,
     artist: meta.common.artist,
@@ -89,7 +94,7 @@ const LibraryContextProvider: FC<PropsWithChildren> = ({ children }) => {
     await deletedSongRows.delete();
     const newSongs = await Promise.allSettled(
       Array.from(diff.new).map(async (path) => {
-        const meta = await loadSongMeta(path);
+        const meta = await loadSongMeta(libPath, path);
         return {
           path,
           ...meta,
@@ -98,6 +103,8 @@ const LibraryContextProvider: FC<PropsWithChildren> = ({ children }) => {
     );
     await Database.instance.songs.bulkAdd(
       newSongs.filter(isFullfilledPromise).map((song) => song.value),
+      undefined,
+      { allKeys: true },
     );
 
     // playlists
@@ -108,6 +115,12 @@ const LibraryContextProvider: FC<PropsWithChildren> = ({ children }) => {
     const songs = await loadSongs();
     setSongs(songs);
   }
+
+  useEffect(() => {
+    if (config.libraryPath) {
+      initData(config.libraryPath).then(() => setReady(true));
+    }
+  }, [config.libraryPath]);
 
   const getSongDetail = useCallback(
     (key: number) => {
@@ -136,7 +149,7 @@ const LibraryContextProvider: FC<PropsWithChildren> = ({ children }) => {
   }, []);
 
   const addSong = useCallback(async (path: string) => {
-    const meta = await loadSongMeta(path);
+    const meta = await loadSongMeta(config.libraryPath!, path);
     const song = {
       path,
       ...meta,
@@ -145,11 +158,8 @@ const LibraryContextProvider: FC<PropsWithChildren> = ({ children }) => {
     setSongs(songs.set(id as number, { ...song, id: id as number }));
   }, []);
 
-  useEffect(() => {
-    if (config.libraryPath) {
-      initData(config.libraryPath).then(() => setReady(true));
-    }
-  }, [config.libraryPath]);
+  const playlistList = useMemo(() => playlists.toArray(), [playlists]);
+  const songList = useMemo(() => songs.valueSeq().toArray(), [songs]);
 
   return (
     <libraryContext.Provider
@@ -161,6 +171,8 @@ const LibraryContextProvider: FC<PropsWithChildren> = ({ children }) => {
         deleteSong,
         deletePlaylist,
         addSong,
+        playlists: playlistList,
+        songs: songList,
       }}
     >
       {children}

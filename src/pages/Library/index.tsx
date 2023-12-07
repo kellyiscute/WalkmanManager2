@@ -9,30 +9,23 @@ import {
   ListSubheader,
   TextField,
 } from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
-import { FC, useState } from "react";
-import { useTranslation } from "react-i18next";
+import { FC, useContext, useState } from "react";
 import SongsView from "./SongsView";
+import { libraryContext } from "@/contexts/LibraryContextProvider";
+import SearchIcon from "@mui/icons-material/Search";
+import { useTranslation } from "react-i18next";
 
 const LibraryPage: FC = () => {
   const [selectedIndex, setSelectedIndex] = useState(-1);
+  const { songs } = useContext(libraryContext);
   const { t } = useTranslation("common");
 
   function selectAllMedia() {
     setSelectedIndex(-1);
   }
 
-  const rows = [
-    { id: 1, name: "Kelly is cute", artist: "Emily", path: "/home/kelly/music/1" },
-    { id: 2, name: "Kelly is not cute", artist: "Cat", path: "/home/kelly/music/1" },
-    { id: 3, name: "Is Kelly cute", artist: "Someone", path: "/home/kelly/music/1" },
-    { id: 4, name: "Kelly is cute", artist: "Someone", path: "/home/kelly/music/1" },
-    { id: 5, name: "Kelly is cute", artist: "", path: "/home/kelly/music/1" },
-    { id: 6, name: "Kelly is cute", artist: "null", path: "/home/kelly/music/1" },
-  ];
-
   return (
-    <div className="h-full flex">
+    <Box className="h-full flex">
       <Box
         component="aside"
         sx={{ borderColor: "divider" }}
@@ -60,14 +53,17 @@ const LibraryPage: FC = () => {
         </List>
       </Box>
 
-      <Box className="flex-auto">
-        <Box sx={{ display: "flex", alignItems: "flex-end", marginLeft: "15px" }}>
+      <Box className="flex-auto w-full flex flex-col">
+        <Box className="flex items-center border-b pl-4" sx={{ borderColor: "grey.700" }}>
           <SearchIcon sx={{ color: "action.active", mr: 1, my: 0.5 }} />
-          <TextField id="input-with-sx" label={t("search")} variant="standard" />
+          <TextField className="py-2" placeholder={t("search")} variant="standard" />
         </Box>
-        <SongsView SongsInfos={rows} />
+
+        <Box className="flex-auto">
+          <SongsView songs={songs} />
+        </Box>
       </Box>
-    </div>
+    </Box>
   );
 };
 
