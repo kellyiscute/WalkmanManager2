@@ -77,7 +77,7 @@ const SongsView: FC<SongsViewArgs> = ({ songs, onDeleteSong, onRemoveFromPlaylis
           <TableRow sx={{ backgroundColor: "background.paper" }}>
             <TableCell align="left">{t("name")}</TableCell>
             <TableCell align="left">{t("artist")}</TableCell>
-            <TableCell align="left">{t("path")}</TableCell>
+            <TableCell align="left">{t("album")}</TableCell>
           </TableRow>
         )}
         itemContent={(_, data) => (
