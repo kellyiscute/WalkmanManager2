@@ -29,6 +29,7 @@ export interface LibraryContextValue {
   getPlaylists: () => string[];
   createPlaylist: (typeof Database)["instance"]["createPlaylist"];
   deletePlaylist: (idOrName: string | number) => Promise<void>;
+  renamePlaylist: (idOrName: string | number, newName: string) => Promise<void>;
 
   playlists: string[];
   songs: SongDetail[];
@@ -153,6 +154,13 @@ const LibraryContextProvider: FC<PropsWithChildren> = ({ children }) => {
     setSongs(songs.delete(id));
   }, []);
 
+  const renamePlaylist = useCallback(async (idOrName: string | number, newName: string) => {
+    await Database.instance.renamePlaylist(idOrName, newName);
+    const index = playlists.findIndex((name) => name === idOrName);
+    const newPlaylists = playlists.set(index, newName);
+    setPlaylists(newPlaylists);
+  }, [playlists]);
+
   const addSong = useCallback(async (path: string) => {
     const meta = await loadSongMeta(config.libraryPath!, path);
     const song = {
@@ -175,6 +183,7 @@ const LibraryContextProvider: FC<PropsWithChildren> = ({ children }) => {
         createPlaylist,
         deleteSong,
         deletePlaylist,
+        renamePlaylist,
         addSong,
         playlists: playlistList,
         songs: songList,

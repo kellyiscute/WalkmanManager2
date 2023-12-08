@@ -21,7 +21,7 @@ export interface PlaylistViewProps {
 }
 
 const PlaylistView: FC<PlaylistViewProps> = ({ onPlaylistSelect }) => {
-  const { playlists, createPlaylist } = useContext(libraryContext);
+  const { playlists, createPlaylist, renamePlaylist } = useContext(libraryContext);
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const [editingPlaylist, setEditingPlaylist] = useState<string | null>(null);
   const [anchorPos, setAnchorPos] = useState<{ top: number; left: number } | null>(null);
@@ -36,8 +36,8 @@ const PlaylistView: FC<PlaylistViewProps> = ({ onPlaylistSelect }) => {
   }
 
   function handleRenamePlaylist(name: string) {
-    setEditingPlaylist(name);
     setAnchorPos(null);
+    setEditingPlaylist(name);
   }
 
   function handleSelectPlaylist(name: string, index: number) {
@@ -49,6 +49,8 @@ const PlaylistView: FC<PlaylistViewProps> = ({ onPlaylistSelect }) => {
     setEditingPlaylist(null);
     if (editingPlaylist === "") {
       createPlaylist(name);
+    } else if (editingPlaylist != null) {
+      renamePlaylist(editingPlaylist, name);
     }
   }
 
@@ -92,24 +94,26 @@ const PlaylistView: FC<PlaylistViewProps> = ({ onPlaylistSelect }) => {
           </ListItemButton>
         ))}
         <Divider />
-        <Menu
-          open={!!anchorPos}
-          anchorReference="anchorPosition"
-          anchorPosition={anchorPos ?? undefined}
-          onClose={() => setAnchorPos(null)}
-        >
-          <MenuItem
-            onClick={() => !!menuContext.current && handleRenamePlaylist(menuContext.current)}
-          >
-            <EditIcon className="mr-2" /> Rename
-          </MenuItem>
-          <MenuItem
-          >
-            <DeleteIcon className="mr-2" color="error" />{" "}
-            <Typography sx={{ color: "error.main" }}>Delete</Typography>
-          </MenuItem>
-        </Menu>
       </List>
+
+      <Menu
+        open={!!anchorPos}
+        anchorReference="anchorPosition"
+        anchorPosition={anchorPos ?? undefined}
+        onClose={() => setAnchorPos(null)}
+      >
+        <MenuItem
+          onClick={() => !!menuContext.current && handleRenamePlaylist(menuContext.current)}
+        >
+          <EditIcon className="mr-2" /> Rename
+        </MenuItem>
+        <MenuItem
+        >
+          <DeleteIcon className="mr-2" color="error" />{" "}
+          <Typography sx={{ color: "error.main" }}>Delete</Typography>
+        </MenuItem>
+      </Menu>
+
       <PlaylistEdit
         open={editingPlaylist != null}
         name={editingPlaylist!}

@@ -38,6 +38,7 @@ export class Database extends Dexie {
 
   async renamePlaylist(name: string, newName: string): Promise<void>;
   async renamePlaylist(id: number, newName: string): Promise<void>;
+  async renamePlaylist(idOrName: number | string, newName: string): Promise<void>
   async renamePlaylist(idOrName: number | string, newName: string): Promise<void> {
     if (typeof idOrName === "number") {
       await this.playlists.where("id").equals(idOrName).modify({ name: newName });

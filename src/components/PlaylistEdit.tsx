@@ -52,6 +52,7 @@ const PlaylistEdit: FC<PlaylistEditProps> = ({ name, open, onCancel, onConfirm }
           fullWidth
           variant="standard"
           required
+          autoFocus
           error={error}
           helperText={errorText}
           value={playlistName}
