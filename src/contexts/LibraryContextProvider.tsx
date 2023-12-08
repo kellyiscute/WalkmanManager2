@@ -139,13 +139,14 @@ const LibraryContextProvider: FC<PropsWithChildren> = ({ children }) => {
 
   const createPlaylist = useCallback(async (name: string) => {
     await Database.instance.createPlaylist(name);
-    setPlaylists(playlists.push(name));
-  }, []);
+    const newPlaylists = playlists.push(name);
+    setPlaylists(newPlaylists);
+  }, [playlists]);
 
   const deletePlaylist = useCallback(async (idOrName: string | number) => {
     await Database.instance.deletePlaylist(idOrName);
     setPlaylists(playlists.filter((name) => name !== idOrName));
-  }, []);
+  }, [playlists]);
 
   const deleteSong = useCallback(async (id: number) => {
     await Database.instance.songs.delete(id);

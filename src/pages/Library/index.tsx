@@ -1,12 +1,5 @@
-import { Add } from "@mui/icons-material";
 import {
   Box,
-  Divider,
-  IconButton,
-  List,
-  ListItem,
-  ListItemButton,
-  ListSubheader,
   TextField,
 } from "@mui/material";
 import { FC, useContext, useMemo, useState } from "react";
@@ -15,9 +8,9 @@ import { libraryContext } from "@/contexts/LibraryContextProvider";
 import SearchIcon from "@mui/icons-material/Search";
 import { useTranslation } from "react-i18next";
 import Fuse from "fuse.js";
+import PlaylistView from "./PlaylistView";
 
 const LibraryPage: FC = () => {
-  const [selectedIndex, setSelectedIndex] = useState(-1);
   const { songs } = useContext(libraryContext);
   const { t } = useTranslation("common");
   const [searchKeyword, setSearchKeyword] = useState("");
@@ -33,38 +26,14 @@ const LibraryPage: FC = () => {
     const res = fuse.search(searchKeyword);
     return res.map((item) => item.item);
   }, [searchKeyword, fuse]);
-
-  function selectAllMedia() {
-    setSelectedIndex(-1);
-  }
-
   return (
     <Box className="h-full flex">
       <Box
         component="aside"
         sx={{ borderColor: "divider" }}
-        className="flex-none h-full w-[250px] border-r"
+        className="relative flex-none h-full w-[250px] border-r"
       >
-        <List>
-          <ListSubheader>Your Library</ListSubheader>
-          <ListItem disablePadding>
-            <ListItemButton selected={selectedIndex === -1} onClick={selectAllMedia}>
-              All Media
-            </ListItemButton>
-          </ListItem>
-          <Divider />
-          <ListSubheader>
-            <div className="flex justify-between align-center">
-              <span>Playlists</span>
-              <span>
-                <IconButton className="aspect-square" size="small" style={{ flex: "none" }}>
-                  <Add fontSize="small" />
-                </IconButton>
-              </span>
-            </div>
-          </ListSubheader>
-          <Divider />
-        </List>
+        <PlaylistView />
       </Box>
 
       <Box className="flex-auto w-full flex flex-col">

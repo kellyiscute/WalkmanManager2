@@ -11,5 +11,13 @@
   "storage-id": "Local Storage ID",
   "name": "Name",
   "artist": "Artist",
-  "path": "Local Path"
+  "path": "Local Path",
+  "create-playlist": "Create Playlist",
+  "rename-playlist": "Rename Playlist",
+  "playlist-name": "Playlist Name",
+  "field-required": "This field is required",
+  "playlist-exists": "Playlist with this name already exists",
+  "cancel": "Cancel",
+  "done": "Done",
+  "ok": "OK"
 }
