@@ -15,17 +15,19 @@ import {
 import { FC, useContext, useRef, useState } from "react";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { backgroundTaskContext } from "@/contexts/BackgroundTaskContextProvider";
 
 export interface PlaylistViewProps {
   onPlaylistSelect?: (name?: string) => void;
 }
 
 const PlaylistView: FC<PlaylistViewProps> = ({ onPlaylistSelect }) => {
-  const { playlists, createPlaylist, renamePlaylist } = useContext(libraryContext);
+  const { playlists, createPlaylist, renamePlaylist, deletePlaylist } = useContext(libraryContext);
+  const { addTask } = useContext(backgroundTaskContext);
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const [editingPlaylist, setEditingPlaylist] = useState<string | null>(null);
   const [anchorPos, setAnchorPos] = useState<{ top: number; left: number } | null>(null);
-  const menuContext = useRef<string | null>(null);
+  const menuContext = useRef<{ name: string; index: number } | null>(null);
 
   function selectAllMedia() {
     setSelectedIndex(-1);
@@ -52,6 +54,17 @@ const PlaylistView: FC<PlaylistViewProps> = ({ onPlaylistSelect }) => {
     } else if (editingPlaylist != null) {
       renamePlaylist(editingPlaylist, name);
     }
+  }
+
+  function handleDeletePlaylist(name: string, index: number) {
+    if (index === selectedIndex) {
+      selectAllMedia();
+    } else if (index < selectedIndex) {
+      setSelectedIndex(selectedIndex - 1);
+    }
+
+    addTask("delete playlist", () => deletePlaylist(name));
+    setAnchorPos(null);
   }
 
   return (
@@ -84,8 +97,8 @@ const PlaylistView: FC<PlaylistViewProps> = ({ onPlaylistSelect }) => {
           <ListItemButton
             key={playlist}
             selected={index === selectedIndex}
-            onContextMenu={(e) => { 
-              menuContext.current = playlist;
+            onContextMenu={(e) => {
+              menuContext.current = { name: playlist, index };
               setAnchorPos({ left: e.clientX, top: e.clientY });
             }}
             onClick={() => handleSelectPlaylist(playlist, index)}
@@ -103,11 +116,14 @@ const PlaylistView: FC<PlaylistViewProps> = ({ onPlaylistSelect }) => {
         onClose={() => setAnchorPos(null)}
       >
         <MenuItem
-          onClick={() => !!menuContext.current && handleRenamePlaylist(menuContext.current)}
+          onClick={() => !!menuContext.current && handleRenamePlaylist(menuContext.current.name)}
         >
           <EditIcon className="mr-2" /> Rename
         </MenuItem>
         <MenuItem
+          onClick={() =>
+            handleDeletePlaylist(menuContext.current!.name, menuContext.current!.index)
+          }
         >
           <DeleteIcon className="mr-2" color="error" />{" "}
           <Typography sx={{ color: "error.main" }}>Delete</Typography>

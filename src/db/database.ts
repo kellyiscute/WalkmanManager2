@@ -25,7 +25,7 @@ export class Database extends Dexie {
       await this.playlistsSongs.where("playlistId").equals(idOrName).delete();
       await this.playlists.where("id").equals(idOrName).delete();
     } else {
-      const playlist = await this.playlists.where("id").equals(idOrName).first();
+      const playlist = await this.playlists.where("name").equals(idOrName).first();
       if (!playlist) return;
       await this.playlistsSongs.where("playlistId").equals(playlist.id!).delete();
       await this.playlists.delete(playlist.id!);

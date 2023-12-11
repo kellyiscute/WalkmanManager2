@@ -40,7 +40,7 @@ const HomePage: FC = () => {
 
   return (
     <div className="h-screen flex flex-col">
-      <div className="absolute bottom-8 right-8">
+      <div className="fixed bottom-8 right-8 z-50">
         <BackgroundTaskIndicator />
       </div>
       <Box className="flex justify-between" sx={{ borderBottom: 1, borderColor: "divider" }}>

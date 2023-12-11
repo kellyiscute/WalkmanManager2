@@ -16,7 +16,7 @@ const BackgroundTaskIndicator: FC = () => {
 
   return (
     <Paper
-      className="flex gap-4 p-4 overflow-hidden"
+      className="flex gap-4 p-4 overflow-hidden z-50"
       sx={{
         transition: "all 0.4s ease-in-out",
         width: showText ? "21rem" : "3.5rem",
