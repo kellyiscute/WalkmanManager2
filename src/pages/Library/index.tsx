@@ -9,16 +9,19 @@ import SearchIcon from "@mui/icons-material/Search";
 import { useTranslation } from "react-i18next";
 import Fuse from "fuse.js";
 import PlaylistView from "./PlaylistView";
+import { Database } from "@/db/database";
 
 const LibraryPage: FC = () => {
-  const { songs } = useContext(libraryContext);
+  const { songs: allSongs, songIdMap } = useContext(libraryContext);
   const { t } = useTranslation("common");
   const [searchKeyword, setSearchKeyword] = useState("");
+  const [songs, setSongs] = useState(allSongs);
 
   const fuse = useMemo(
     () => new Fuse(songs, { includeScore: true, keys: ["title", "album", "artist"] }),
     [songs],
   );
+
   const searchResult = useMemo(() => {
     if (searchKeyword === "") {
       return songs;
@@ -26,6 +29,16 @@ const LibraryPage: FC = () => {
     const res = fuse.search(searchKeyword);
     return res.map((item) => item.item);
   }, [searchKeyword, fuse]);
+
+  async function handleSelectPlaylist(name?: string) {
+    if (name) {
+      const songsId = await Database.instance.getPlaylistSongs(name);
+      setSongs(songsId.map((id) => songIdMap.get(id)!));
+    } else {
+      setSongs(allSongs);
+    }
+  }
+
   return (
     <Box className="h-full flex">
       <Box
@@ -33,7 +46,7 @@ const LibraryPage: FC = () => {
         sx={{ borderColor: "divider" }}
         className="relative flex-none h-full w-[250px] border-r"
       >
-        <PlaylistView />
+        <PlaylistView onPlaylistSelect={handleSelectPlaylist} />
       </Box>
 
       <Box className="flex-auto w-full flex flex-col">

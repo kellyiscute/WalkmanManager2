@@ -16,6 +16,7 @@ import { FC, useContext, useRef, useState } from "react";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { backgroundTaskContext } from "@/contexts/BackgroundTaskContextProvider";
+import { Database } from "@/db/database";
 
 export interface PlaylistViewProps {
   onPlaylistSelect?: (name?: string) => void;
@@ -27,10 +28,12 @@ const PlaylistView: FC<PlaylistViewProps> = ({ onPlaylistSelect }) => {
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const [editingPlaylist, setEditingPlaylist] = useState<string | null>(null);
   const [anchorPos, setAnchorPos] = useState<{ top: number; left: number } | null>(null);
+  const [dragHl, setDragHl] = useState<number | null>(null);
   const menuContext = useRef<{ name: string; index: number } | null>(null);
 
   function selectAllMedia() {
     setSelectedIndex(-1);
+    onPlaylistSelect?.();
   }
 
   function handleCreatePlaylist() {
@@ -67,9 +70,21 @@ const PlaylistView: FC<PlaylistViewProps> = ({ onPlaylistSelect }) => {
     setAnchorPos(null);
   }
 
+  function handleDragOver(event: React.DragEvent<HTMLDivElement>, index: number) {
+    event.preventDefault();
+    setDragHl(index);
+  };
+
+  function handleDrop(event: React.DragEvent<HTMLDivElement>, playlistName: string) {
+    event.preventDefault();
+    setDragHl(null);
+    const songId = event.dataTransfer.getData("song");
+    Database.instance.addSongToPlaylist(parseInt(songId), playlistName);
+  };
+
   return (
     <>
-      <List className="absolute h-full w-full overflow-y-auto">
+      <List className="absolute h-full w-full overflow-y-auto pt-0">
         <ListSubheader>Your Library</ListSubheader>
         <ListItem disablePadding>
           <ListItemButton selected={selectedIndex === -1} onClick={selectAllMedia}>
@@ -97,10 +112,14 @@ const PlaylistView: FC<PlaylistViewProps> = ({ onPlaylistSelect }) => {
           <ListItemButton
             key={playlist}
             selected={index === selectedIndex}
+            onDragOver={(e) => handleDragOver(e, index)}
+            onDragLeave={() => setDragHl(null)}
+            onDrop={(e) => handleDrop(e, playlist)}
             onContextMenu={(e) => {
               menuContext.current = { name: playlist, index };
               setAnchorPos({ left: e.clientX, top: e.clientY });
             }}
+            style={{ backgroundColor: index === dragHl ? "rgba(255,255,255,0.1)" : undefined }}
             onClick={() => handleSelectPlaylist(playlist, index)}
           >
             {playlist}

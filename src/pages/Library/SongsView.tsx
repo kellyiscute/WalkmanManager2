@@ -58,6 +58,10 @@ const SongsView: FC<SongsViewArgs> = ({ songs, onDeleteSong, onRemoveFromPlaylis
     contextMenuContext.current = null;
   };
 
+  const handleDragStart = (event: React.DragEvent<HTMLTableRowElement>, songId: number) => {
+    event.dataTransfer.setData("song", songId.toString());
+  };
+
   return (
     <>
       <TableVirtuoso
@@ -69,7 +73,13 @@ const SongsView: FC<SongsViewArgs> = ({ songs, onDeleteSong, onRemoveFromPlaylis
           ),
           TableHead,
           TableRow: (data) => (
-            <TableRow hover {...data} onContextMenu={(e) => handleContextMenu(e, data.item.id!)} />
+            <TableRow
+              hover
+              draggable
+              onDragStart={(e) => handleDragStart(e, data.item.id!)}
+              {...data}
+              onContextMenu={(e) => handleContextMenu(e, data.item.id!)}
+            />
           ),
           TableBody,
         }}

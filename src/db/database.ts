@@ -73,6 +73,21 @@ export class Database extends Dexie {
     await this.songs.where("id").equals(id).delete();
   }
 
+  async addSongToPlaylist(songId: number, playlistId: number): Promise<void>
+  async addSongToPlaylist(songId: number, playlistName: string): Promise<void>
+  async addSongToPlaylist(songId: number, idOrName: number | string): Promise<void> {
+    let playlistId: number;
+    if (typeof idOrName === "string") {
+      const pl = await this.playlists.where("name").equals(idOrName).first();
+      if (!pl) throw new Error("Playlist not found");
+      playlistId = pl.id!;
+    } else {
+      playlistId = idOrName;
+    }
+    const lastOrder = await this.playlistsSongs.where("playlistId").equals(playlistId).count();
+    this.playlistsSongs.add({ playlistId, songId, order: lastOrder });
+  }
+
   async removeSongFromPlaylist(songId: number, playlistId: number) {
     await this.playlistsSongs
       .where("songId")

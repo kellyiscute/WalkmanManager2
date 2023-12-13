@@ -33,6 +33,7 @@ export interface LibraryContextValue {
 
   playlists: string[];
   songs: SongDetail[];
+  songIdMap: Map<number, SongDetail>;
 }
 
 export const libraryContext = createContext<LibraryContextValue>(null!);
@@ -72,9 +73,9 @@ async function loadSongMeta(libPath: string, filename: string): Promise<MusicMet
   };
 }
 
-async function loadPlaylists() {
+async function loadPlaylists(): Promise<[number, string][]> {
   const allPlaylists = await Database.instance.playlists.toArray();
-  return allPlaylists.map((playlist) => playlist.name);
+  return allPlaylists.map((playlist) => [playlist.id!, playlist.name]);
 }
 
 async function loadSongs() {
@@ -114,7 +115,7 @@ const LibraryContextProvider: FC<PropsWithChildren> = ({ children }) => {
 
     // playlists
     const playlists = await loadPlaylists();
-    setPlaylists(List(playlists));
+    setPlaylists(List(playlists.map(([, name]) => name)));
 
     // songs
     const songs = await loadSongs();
@@ -138,28 +139,37 @@ const LibraryContextProvider: FC<PropsWithChildren> = ({ children }) => {
     return playlists.toArray();
   }, [playlists]);
 
-  const createPlaylist = useCallback(async (name: string) => {
-    await Database.instance.createPlaylist(name);
-    const newPlaylists = playlists.push(name);
-    setPlaylists(newPlaylists);
-  }, [playlists]);
+  const createPlaylist = useCallback(
+    async (name: string) => {
+      await Database.instance.createPlaylist(name);
+      const newPlaylists = playlists.push(name);
+      setPlaylists(newPlaylists);
+    },
+    [playlists],
+  );
 
-  const deletePlaylist = useCallback(async (idOrName: string | number) => {
-    await Database.instance.deletePlaylist(idOrName);
-    setPlaylists(playlists.filter((name) => name !== idOrName));
-  }, [playlists]);
+  const deletePlaylist = useCallback(
+    async (idOrName: string | number) => {
+      await Database.instance.deletePlaylist(idOrName);
+      setPlaylists(playlists.filter((name) => name !== idOrName));
+    },
+    [playlists],
+  );
 
   const deleteSong = useCallback(async (id: number) => {
     await Database.instance.songs.delete(id);
     setSongs(songs.delete(id));
   }, []);
 
-  const renamePlaylist = useCallback(async (idOrName: string | number, newName: string) => {
-    await Database.instance.renamePlaylist(idOrName, newName);
-    const index = playlists.findIndex((name) => name === idOrName);
-    const newPlaylists = playlists.set(index, newName);
-    setPlaylists(newPlaylists);
-  }, [playlists]);
+  const renamePlaylist = useCallback(
+    async (idOrName: string | number, newName: string) => {
+      await Database.instance.renamePlaylist(idOrName, newName);
+      const index = playlists.findIndex((name) => name === idOrName);
+      const newPlaylists = playlists.set(index, newName);
+      setPlaylists(newPlaylists);
+    },
+    [playlists],
+  );
 
   const addSong = useCallback(async (path: string) => {
     const meta = await loadSongMeta(config.libraryPath!, path);
@@ -187,6 +197,7 @@ const LibraryContextProvider: FC<PropsWithChildren> = ({ children }) => {
         addSong,
         playlists: playlistList,
         songs: songList,
+        songIdMap: songs,
       }}
     >
       {children}
