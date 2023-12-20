@@ -1,5 +1,6 @@
 import { SongsSchema } from "@/db/schemas/songs.schema";
 import {
+  Checkbox,
   Menu,
   MenuItem,
   Table,
@@ -9,7 +10,8 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
-import React, { FC, useRef, useState } from "react";
+import { Set } from "immutable";
+import React, { FC, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { TableVirtuoso } from "react-virtuoso";
 
@@ -17,11 +19,22 @@ export interface SongsViewArgs {
   songs: SongsSchema[];
   onDeleteSong?: (songId: number) => void;
   onRemoveFromPlaylist?: (songId: number) => void;
+  sortable?: boolean;
 }
 
-const SongsView: FC<SongsViewArgs> = ({ songs, onDeleteSong, onRemoveFromPlaylist }) => {
+const SongsView: FC<SongsViewArgs> = ({
+  songs,
+  onDeleteSong,
+  onRemoveFromPlaylist,
+  sortable = false,
+}) => {
   const { t } = useTranslation("common");
   const contextMenuContext = useRef<number | null>(null);
+  const [selected, setSelected] = useState<Set<number>>(Set());
+
+  useEffect(() => {
+    setSelected(Set());
+  }, [songs]);
 
   const [contextMenu, setContextMenu] = useState<{
     mouseX: number;
@@ -59,7 +72,21 @@ const SongsView: FC<SongsViewArgs> = ({ songs, onDeleteSong, onRemoveFromPlaylis
   };
 
   const handleDragStart = (event: React.DragEvent<HTMLTableRowElement>, songId: number) => {
-    event.dataTransfer.setData("song", songId.toString());
+    if (selected.size > 0) {
+      event.dataTransfer.setData("songDragMultiple", "true");
+      event.dataTransfer.setData("songs", JSON.stringify(Array.from(selected)));
+    } else {
+      event.dataTransfer.setData("song", songId.toString());
+    }
+  };
+
+  const handleSelect = (e: React.ChangeEvent<HTMLInputElement>, id: number) => {
+    console.log(id, e.target.checked);
+    setSelected(e.target.checked ? selected.add(id) : selected.delete(id));
+  };
+
+  const toggleSelect = (id: number) => {
+    setSelected(selected.has(id) ? selected.delete(id) : selected.add(id));
   };
 
   return (
@@ -79,12 +106,32 @@ const SongsView: FC<SongsViewArgs> = ({ songs, onDeleteSong, onRemoveFromPlaylis
               onDragStart={(e) => handleDragStart(e, data.item.id!)}
               {...data}
               onContextMenu={(e) => handleContextMenu(e, data.item.id!)}
-            />
+              onClick={() => toggleSelect(data.item.id!)}
+            >
+              <TableCell padding="checkbox">
+                {sortable ? null : (
+                  <Checkbox
+                    checked={selected.has(data.item.id!)}
+                    onChange={(e) => handleSelect(e, data.item.id!)}
+                  />
+                )}
+              </TableCell>
+              {data.children}
+            </TableRow>
           ),
           TableBody,
         }}
         fixedHeaderContent={() => (
           <TableRow sx={{ backgroundColor: "background.paper" }}>
+            <TableCell padding="checkbox">
+              <Checkbox
+                checked={selected.size === songs.length}
+                indeterminate={selected.size > 0 && selected.size < songs.length}
+                onChange={(e) =>
+                  setSelected(e.target.checked ? Set(songs.map((song) => song.id!)) : Set())
+                }
+              />
+            </TableCell>
             <TableCell align="left">{t("name")}</TableCell>
             <TableCell align="left">{t("artist")}</TableCell>
             <TableCell align="left">{t("album")}</TableCell>

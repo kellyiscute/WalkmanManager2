@@ -75,11 +75,19 @@ const PlaylistView: FC<PlaylistViewProps> = ({ onPlaylistSelect }) => {
     setDragHl(index);
   };
 
-  function handleDrop(event: React.DragEvent<HTMLDivElement>, playlistName: string) {
+  async function handleDrop(event: React.DragEvent<HTMLDivElement>, playlistName: string) {
     event.preventDefault();
     setDragHl(null);
-    const songId = event.dataTransfer.getData("song");
-    Database.instance.addSongToPlaylist(parseInt(songId), playlistName);
+    const isMultiple = event.dataTransfer.getData("songDragMultiple") === "true";
+    if (isMultiple) {
+      const songIds = JSON.parse(event.dataTransfer.getData("songs")) as number[];
+      for (const songId of songIds) {
+        await Database.instance.addSongToPlaylist(songId, playlistName);
+      }
+    } else {
+      const songId = event.dataTransfer.getData("song");
+      await Database.instance.addSongToPlaylist(parseInt(songId), playlistName);
+    }
   };
 
   return (
@@ -119,7 +127,7 @@ const PlaylistView: FC<PlaylistViewProps> = ({ onPlaylistSelect }) => {
               menuContext.current = { name: playlist, index };
               setAnchorPos({ left: e.clientX, top: e.clientY });
             }}
-            style={{ backgroundColor: index === dragHl ? "rgba(255,255,255,0.1)" : undefined }}
+            style={{ backgroundColor: index === dragHl ? "rgba(255,255,255,0.2)" : undefined }}
             onClick={() => handleSelectPlaylist(playlist, index)}
           >
             {playlist}

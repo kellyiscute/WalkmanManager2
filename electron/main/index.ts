@@ -19,6 +19,7 @@ process.env.VITE_PUBLIC = process.env.VITE_DEV_SERVER_URL
   ? join(process.env.DIST_ELECTRON, "../public")
   : process.env.DIST;
 const reactDevtoolsPath = process.env.REACT_DEVTOOLS_PATH;
+console.log(reactDevtoolsPath);
 
 // Disable GPU Acceleration for Windows 7
 if (release().startsWith("6.1")) app.disableHardwareAcceleration();
