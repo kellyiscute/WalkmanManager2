@@ -14,6 +14,7 @@ import { Set } from "immutable";
 import React, { FC, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { TableVirtuoso } from "react-virtuoso";
+import DragHandleIcon from "@mui/icons-material/DragHandle";
 
 export interface SongsViewArgs {
   songs: SongsSchema[];
@@ -31,15 +32,17 @@ const SongsView: FC<SongsViewArgs> = ({
   const { t } = useTranslation("common");
   const contextMenuContext = useRef<number | null>(null);
   const [selected, setSelected] = useState<Set<number>>(Set());
-
-  useEffect(() => {
-    setSelected(Set());
-  }, [songs]);
+  const [currentSortTarget, setCurrentSortTarget] = useState<number | null>(null);
+  const dropTargetIndicator = useRef<HTMLDivElement | null>(null);
 
   const [contextMenu, setContextMenu] = useState<{
     mouseX: number;
     mouseY: number;
   } | null>(null);
+
+  useEffect(() => {
+    setSelected(Set());
+  }, [songs]);
 
   const handleContextMenu = (
     event: React.MouseEvent<HTMLTableRowElement, MouseEvent>,
@@ -89,27 +92,54 @@ const SongsView: FC<SongsViewArgs> = ({
     setSelected(selected.has(id) ? selected.delete(id) : selected.add(id));
   };
 
+  const handleSortDragOver = (event: React.DragEvent<HTMLDivElement>, id: number) => {
+    event.preventDefault();
+    setCurrentSortTarget(id);
+    if (dropTargetIndicator.current) {
+      dropTargetIndicator.current.style.display = "block";
+      dropTargetIndicator.current.style.top = event.currentTarget.offsetTop + "px";
+    }
+  };
+
+  const handleSortDrop = (event: React.DragEvent<HTMLDivElement>, id: number) => {
+    if (dropTargetIndicator.current) {
+      dropTargetIndicator.current.style.display = "none";
+    }
+  };
+
   return (
     <>
+      <div
+        className="absolute border-t border-white border-solid w-full"
+        ref={dropTargetIndicator}
+      />
       <TableVirtuoso
         data={songs}
         components={{
           Scroller: TableContainer,
+          TableBody,
+          TableHead,
           Table: (props) => (
             <Table {...props} sx={{ tableLayout: "fixed", borderCollapse: "separate" }} />
           ),
-          TableHead,
           TableRow: (data) => (
             <TableRow
-              hover
-              draggable
-              onDragStart={(e) => handleDragStart(e, data.item.id!)}
               {...data}
+              hover
+              draggable={!sortable}
+              onDragStart={!sortable ? (e) => handleDragStart(e, data.item.id!) : undefined}
+              onDragOver={sortable ? (e) => handleSortDragOver(e, data.item.id!) : undefined}
+              onDragEnd={sortable ? (e) => handleSortDrop(e, data.item.id!) : undefined}
               onContextMenu={(e) => handleContextMenu(e, data.item.id!)}
               onClick={() => toggleSelect(data.item.id!)}
+              className="relative"
             >
               <TableCell padding="checkbox">
-                {sortable ? null : (
+                {sortable ? (
+                  <div draggable={sortable} className="flex justify-center">
+                    <DragHandleIcon />
+                  </div>
+                ) : (
                   <Checkbox
                     checked={selected.has(data.item.id!)}
                     onChange={(e) => handleSelect(e, data.item.id!)}
@@ -119,18 +149,19 @@ const SongsView: FC<SongsViewArgs> = ({
               {data.children}
             </TableRow>
           ),
-          TableBody,
         }}
         fixedHeaderContent={() => (
           <TableRow sx={{ backgroundColor: "background.paper" }}>
             <TableCell padding="checkbox">
-              <Checkbox
-                checked={selected.size === songs.length}
-                indeterminate={selected.size > 0 && selected.size < songs.length}
-                onChange={(e) =>
-                  setSelected(e.target.checked ? Set(songs.map((song) => song.id!)) : Set())
-                }
-              />
+              {!sortable && (
+                <Checkbox
+                  checked={selected.size === songs.length}
+                  indeterminate={selected.size > 0 && selected.size < songs.length}
+                  onChange={(e) =>
+                    setSelected(e.target.checked ? Set(songs.map((song) => song.id!)) : Set())
+                  }
+                />
+              )}
             </TableCell>
             <TableCell align="left">{t("name")}</TableCell>
             <TableCell align="left">{t("artist")}</TableCell>

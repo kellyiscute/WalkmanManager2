@@ -16,6 +16,7 @@ const LibraryPage: FC = () => {
   const { t } = useTranslation("common");
   const [searchKeyword, setSearchKeyword] = useState("");
   const [songs, setSongs] = useState(allSongs);
+  const [currentPlaylist, setCurrentPlaylist] = useState<string | null>(null);
 
   const fuse = useMemo(
     () => new Fuse(songs, { includeScore: true, keys: ["title", "album", "artist"] }),
@@ -37,6 +38,7 @@ const LibraryPage: FC = () => {
     } else {
       setSongs(allSongs);
     }
+    setCurrentPlaylist(name ?? null);
   }
 
   return (
@@ -61,8 +63,8 @@ const LibraryPage: FC = () => {
           />
         </Box>
 
-        <Box className="flex-auto">
-          <SongsView songs={searchResult} />
+        <Box className="flex-auto relative">
+          <SongsView songs={searchResult} sortable={currentPlaylist != null} />
         </Box>
       </Box>
     </Box>
